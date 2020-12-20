@@ -66,8 +66,9 @@
   register: impacket
   run_once: true
 
-- set_fact:
-    impacket_uri="{{ impacket.stdout }}"
+- name: set Impacket uri
+  set_fact:
+    impacket_uri: "{{ impacket.stdout }}"
 
 - name: get latest kerbrute version url
   shell: |
@@ -81,8 +82,9 @@
   register: kerbrute
   run_once: true
 
-- set_fact:
-    kerbrute_uri="{{ kerbrute.stdout }}""
+- name: set Kerbrute uri
+  set_fact:
+    kerbrute_uri: "{{ kerbrute.stdout }}"
 
 - name: download latest releases from Github
   get_url:
