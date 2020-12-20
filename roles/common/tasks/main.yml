@@ -86,8 +86,8 @@
 
 - name: download latest releases from Github
   get_url:
-    url: {{ item.url }}
-    dest: {{ item.dest }}
+    url: "{{ item.url }}"
+    dest: "{{ item.dest }}"
   with_items:
     - { url: "https://www.github.com{{ impacket_uri }}", dest: /tmp/impacket-latest.tar.gz }
     - { url: "https://www.github.com{{ kerbrute_uri }}", dest: /tmp/kerbrute-latest }
