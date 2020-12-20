@@ -84,7 +84,7 @@
 
 - name: set Kerbrute uri
   set_fact:
-    kerbrute_uri: "{{ kerbrute.stdout }}"u
+    kerbrute_uri: "{{ kerbrute.stdout }}"
 
 - name: download latest releases from Github
   get_url:
