@@ -136,4 +136,4 @@
   script: ../scripts/impacket.sh
 
 - name: install kerbrute
-  shell: mv /tmp/kerbrute-latest /usr/local/bin/kerbrute
+  shell: mv /tmp/kerbrute-latest /usr/local/bin/kerbrute && chmod +x /usr/local/bin/kerbrute
