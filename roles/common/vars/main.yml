@@ -1,0 +1,4 @@
+# common role variables
+
+local_user: "kali"
+bin_folder: "/home/{{ local_user }}/bin"

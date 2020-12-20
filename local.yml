@@ -1,0 +1,7 @@
+# Playbook for setting up a Kali host.
+#
+
+- name: apply common configuration to localhost
+  hosts: localhost
+  roles:
+    - common

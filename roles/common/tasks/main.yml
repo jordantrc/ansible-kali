@@ -1,0 +1,137 @@
+##########
+# Folders
+##########
+
+- name: create local user bin folder
+  file:
+    path: "{{ bin_folder }}"
+    state: directory
+    mode: '0700'
+
+##########
+# apt packages
+##########
+
+- name: install apt packages
+  apt:
+    pkg:
+      - crackmapexec
+      - libssl-dev
+      - ufw
+      - seclists
+
+##########
+# Firewall
+##########
+
+- name: install and enable ufw
+  ufw:
+    state: enabled
+
+- name: permit ssh
+  ufw:
+    rule: allow
+    name: OpenSSH
+
+##########
+# Downloads
+##########
+
+- name: install Jordan's scripts
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ item.dest }}"
+    mode: "0700"
+  with_items:
+    - { url: https://raw.githubusercontent.com/jordantrc/port_scanners/master/masscan.sh, dest: "{{ bin_folder }}/masscan.sh" }
+    - { url: https://raw.githubusercontent.com/jordantrc/port_scanners/master/nmap.sh, dest: "{{ bin_folder }}/nmap.sh" }
+    - { url: https://raw.githubusercontent.com/jordantrc/port_scanners/master/scan_host_list.py, dest: "{{ bin_folder }}/scan_host_list.py" }
+    - { url: https://raw.githubusercontent.com/jordantrc/port_scanners/master/pipa-route.sh, dest: "{{ bin_folder }}/pipa-route.sh" }
+    - { url: https://raw.githubusercontent.com/jordantrc/port_scanners/master/http-security-check.sh, dest: "{{ bin_folder }}/http-security-check.sh" }
+
+- name: download rdpscan
+  get_url:
+    url: https://github.com/robertdavidgraham/rdpscan/archive/master.zip
+    dest: /tmp/rdpscan.zip
+
+- name: get latest Impacket version url
+  shell: | 
+    curl -L -Ss https://github.com/SecureAuthCorp/impacket/releases/latest \
+    | grep "<a href=" \
+    | grep -E "impacket-.+\.tar\.gz" \
+    | awk '{$1=$1;print}' \
+    | cut -d "=" -f 2 \
+    | cut -d " " -f 1 \
+    | tr -d \"
+  register: impacket
+  run_once: true
+
+- set_fact:
+    impacket_uri={{ impacket.stdout }}
+
+- name: get latest kerbrute version url
+  shell: |
+    curl -L -Ss https://github.com/ropnop/kerbrute/releases/latest \
+    | grep "<a href=" \
+    | grep -E "kerbrute_linux_amd64" \
+    | awk '{$1=$1;print}' \
+    | cut -d "=" -f 2 \
+    | cut -d " " -f 1 \
+    | tr -d \")
+  register: kerbrute
+  run_once: true
+
+- set_fact:
+    kerbrute_uri={{ kerbrute.stdout }}
+
+- name: download latest releases from Github
+  get_url:
+    url: {{ item.url }}
+    dest: {{ item.dest }}
+  with_items:
+    - { url: "https://www.github.com"{{ impacket_uri }}, dest: /tmp/impacket-latest.tar.gz }
+    - { url: "https://www.github.com"{{ kerbrute_uri }}, dest: /tmp/kerbrute-latest }
+
+- name: git clone tmux tpm plugin
+  git:
+    repo: https://github.com/tmux-plugins/tpm
+    dest: /home/{{ local_user }}/.tmux/plugins/tpm
+
+
+##########
+# Templates
+##########
+
+# set the contents of the local_user .tmux.conf file
+- name: set .tmux.conf file contents
+  template:
+    src: ../templates/tmux.conf.j2
+    dest: /home/{{ local_user }}/.tmux.conf
+    owner: "{{ local_user }}"
+    group: "{{ local_user }}"
+    mode: 0600
+
+
+# set the contents of the issue.net file
+- name: create issue.net template
+  template:
+    src: ../templates/banner.j2
+    dest: /etc/issue.net
+    owner: root
+    group: root
+    mode: 0600
+
+##########
+# Install utilities from source
+##########
+
+- name: install rdpscan
+  script: ../scripts/rdpscan.sh
+  args:
+    creates: /usr/local/bin/rdpscan
+
+- name: install Impacket
+  script: ../scripts/impacket.sh
+
+- name: install kerbrute
+  shell: mv /tmp/kerbrute-latest /usr/local/bin/kerbrute
