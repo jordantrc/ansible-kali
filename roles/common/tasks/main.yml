@@ -67,7 +67,7 @@
   run_once: true
 
 - set_fact:
-    impacket_uri={{ impacket.stdout }}
+    impacket_uri="{{ impacket.stdout }}"
 
 - name: get latest kerbrute version url
   shell: |
@@ -82,20 +82,20 @@
   run_once: true
 
 - set_fact:
-    kerbrute_uri={{ kerbrute.stdout }}
+    kerbrute_uri="{{ kerbrute.stdout }}""
 
 - name: download latest releases from Github
   get_url:
     url: {{ item.url }}
     dest: {{ item.dest }}
   with_items:
-    - { url: "https://www.github.com"{{ impacket_uri }}, dest: /tmp/impacket-latest.tar.gz }
-    - { url: "https://www.github.com"{{ kerbrute_uri }}, dest: /tmp/kerbrute-latest }
+    - { url: "https://www.github.com{{ impacket_uri }}", dest: /tmp/impacket-latest.tar.gz }
+    - { url: "https://www.github.com{{ kerbrute_uri }}", dest: /tmp/kerbrute-latest }
 
 - name: git clone tmux tpm plugin
   git:
     repo: https://github.com/tmux-plugins/tpm
-    dest: /home/{{ local_user }}/.tmux/plugins/tpm
+    dest: "/home/{{ local_user }}/.tmux/plugins/tpm"
 
 
 ##########
