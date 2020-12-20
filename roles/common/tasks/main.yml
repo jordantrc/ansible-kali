@@ -47,7 +47,7 @@
     - { url: https://raw.githubusercontent.com/jordantrc/port_scanners/master/nmap.sh, dest: "{{ bin_folder }}/nmap.sh" }
     - { url: https://raw.githubusercontent.com/jordantrc/port_scanners/master/scan_host_list.py, dest: "{{ bin_folder }}/scan_host_list.py" }
     - { url: https://raw.githubusercontent.com/jordantrc/port_scanners/master/pipa-route.sh, dest: "{{ bin_folder }}/pipa-route.sh" }
-    - { url: https://raw.githubusercontent.com/jordantrc/port_scanners/master/http-security-check.sh, dest: "{{ bin_folder }}/http-security-check.sh" }
+    - { url: https://raw.githubusercontent.com/jordantrc/enumeration/master/http-security-check.sh, dest: "{{ bin_folder }}/http-security-check.sh" }
 
 - name: download rdpscan
   get_url:
@@ -84,7 +84,7 @@
 
 - name: set Kerbrute uri
   set_fact:
-    kerbrute_uri: "{{ kerbrute.stdout }}"
+    kerbrute_uri: "{{ kerbrute.stdout }}"u
 
 - name: download latest releases from Github
   get_url:
